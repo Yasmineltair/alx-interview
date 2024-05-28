@@ -1,4 +1,4 @@
-I!/usr/bin/python3
+#!/usr/bin/python3
 ''' module for creating pascal's triangle'''
 
 
