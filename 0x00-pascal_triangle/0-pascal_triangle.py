@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+I!/usr/bin/python3
 ''' module for creating pascal's triangle'''
 
 
@@ -6,7 +6,7 @@ def pascal_triangle(n):
     ''' create pascal triangle'''
     triangle=[]
     if type(n) is not int or n <= 0:
-        return triangle
+        return triangle 
     for i in range(n):
         line=[]
         for j in range(i + 1):
@@ -14,5 +14,5 @@ def pascal_triangle(n):
                 line.append(1)
             elif i > 0 and j > 0:
                 line.append(triangle[i - 1][j - 1] + triangle[i - 1][j])
-                triangle.append(line)
-        return triangle
+        triangle.append(line)
+    return triangle
