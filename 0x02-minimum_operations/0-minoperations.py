@@ -8,12 +8,12 @@ def minOperations(n):
         return 0
     
     op_count = 0
-    div= 2
+    div = 2
     
     while n > 1:
-        while n % divisor == 0:
+        while n % div == 0:
             op_count += div
-            n //= div
-        divisor += 1
+            n /= div
+        div += 1
     
     return op_count
