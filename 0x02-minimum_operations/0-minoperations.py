@@ -4,6 +4,7 @@
 
 def minOperations(n):
     """ min operations func"""
+
     if n <= 1:
         return 0
     
