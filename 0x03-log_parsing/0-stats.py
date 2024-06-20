@@ -1,36 +1,54 @@
 #!/usr/bin/python3
-"""reads stdin line by line and computes metrics:"""
 
 import sys
 
-cache = {'200': 0, '301': 0, '400': 0, '401': 0,
-         '403': 0, '404': 0, '405': 0, '500': 0}
-total_size = 0
-count = 0
+
+def print_msg(dict_sc, total_file_size):
+    """
+    Method to print
+    Args:
+        dict_sc: dict of status codes
+        total_file_size: total of the file
+    Returns:
+        Nothing
+    """
+
+    print("File size: {}".format(total_file_size))
+    for key, val in sorted(dict_sc.items()):
+        if val != 0:
+            print("{}: {}".format(key, val))
+
+
+total_file_size = 0
+code = 0
+counter = 0
+dict_sc = {"200": 0,
+           "301": 0,
+           "400": 0,
+           "401": 0,
+           "403": 0,
+           "404": 0,
+           "405": 0,
+           "500": 0}
 
 try:
     for line in sys.stdin:
-        line_lst = line.split(" ")
-        if len(line_lst) > 4:
-            code = line_lst[-2]
-            size = int(line_lst[-1])
-            if code in cache.keys():
-                cache[code] += 1
-            total_size += size
-            count += 1
+        parsed_line = line.split()
+        parsed_line = parsed_line[::-1] 
 
-        if count == 10:
-            count = 0
-            print('File size: {}'.format(total_size))
-            for key, value in sorted(cache.items()):
-                if value != 0:
-                    print('{}: {}'.format(key, value))
+        if len(parsed_line) > 2:
+            counter += 1
 
-except Exception as err:
-    pass
+            if counter <= 10:
+                total_file_size += int(parsed_line[0])  
+                code = parsed_line[1]  
+
+                if (code in dict_sc.keys()):
+                    dict_sc[code] += 1
+
+            if (counter == 10):
+                print_msg(dict_sc, total_file_size)
+                counter = 0
 
 finally:
-    print('File size: {}'.format(total_size))
-    for key, value in sorted(cache.items()):
-        if value != 0:
-            print('{}: {}'.format(key, value))
+    print_msg(dict_sc, total_file_size)
