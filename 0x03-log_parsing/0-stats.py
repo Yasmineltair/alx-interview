@@ -4,54 +4,72 @@ A script: Reads standard input line by line and computes metrics
 """
 
 import sys
+import signal
 
 
-def parseLogs():
-    """
-    Reads logs from standard input and generates reports
-    Reports:
-        * Prints log size after reading every 10 lines & at KeyboardInterrupt
-    Raises:
-        KeyboardInterrupt (Exception): handles this exception and raises it
-    """
-    stdin = __import__('sys').stdin
-    lineNumber = 0
-    fileSize = 0
-    statusCodes = {}
-    codes = ('200', '301', '400', '401', '403', '404', '405', '500')
-    try:
-        for line in stdin:
-            lineNumber += 1
-            line = line.split()
-            try:
-                fileSize += int(line[-1])
-                if line[-2] in codes:
-                    try:
-                        statusCodes[line[-2]] += 1
-                    except KeyError:
-                        statusCodes[line[-2]] = 1
-            except (IndexError, ValueError):
-                pass
-            if lineNumber == 10:
-                report(fileSize, statusCodes)
-                lineNumber = 0
-        report(fileSize, statusCodes)
-    except KeyboardInterrupt as e:
-        report(fileSize, statusCodes)
-        raise
+import signal
 
+# Initialize variables to hold the metrics
+total_file_size = 0
+status_code_counts = {
+    200: 0,
+    301: 0,
+    400: 0,
+    401: 0,
+    403: 0,
+    404: 0,
+    405: 0,
+    500: 0
+}
+line_count = 0
 
-def report(fileSize, statusCodes):
-    """
-    Prints generated report to standard output
-    Args:
-        fileSize (int): total log size after every 10 successfully read line
-        statusCodes (dict): dictionary of status codes and counts
-    """
-    print("File size: {}".format(fileSize))
-    for key, value in sorted(statusCodes.items()):
-        print("{}: {}".format(key, value))
+def print_statistics():
+    print(f"File size: {total_file_size}")
+    for code in sorted(status_code_counts.keys()):
+        if status_code_counts[code] > 0:
+            print(f"{code}: {status_code_counts[code]}")
 
+def signal_handler(sig, frame):
+    print_statistics()
+    sys.exit(0)
 
-if __name__ == '__main__':
-    parseLogs()
+signal.signal(signal.SIGINT, signal_handler)
+
+try:
+    for line in sys.stdin:
+        parts = line.split()
+        
+        # Validate format
+        if len(parts) < 9:
+            continue
+        
+        ip = parts[0]
+        date = parts[3] + parts[4]
+        request = parts[5] + ' ' + parts[6] + ' ' + parts[7]
+        status_code = parts[-2]
+        file_size = parts[-1]
+        
+        if not request.startswith('"GET /projects/260 HTTP/1.1"'):
+            continue
+        
+        try:
+            status_code = int(status_code)
+            file_size = int(file_size)
+        except ValueError:
+            continue
+        
+        total_file_size += file_size
+        if status_code in status_code_counts:
+            status_code_counts[status_code] += 1
+        
+        line_count += 1
+        
+        if line_count % 10 == 0:
+            print_statistics()
+
+except KeyboardInterrupt:
+    print_statistics()
+    sys.exit(0)
+
+# Final statistics after reading all lines
+print_statistics()
