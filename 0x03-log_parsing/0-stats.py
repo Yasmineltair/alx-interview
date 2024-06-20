@@ -3,6 +3,8 @@
 A script: Reads standard input line by line and computes metrics
 """
 
+import sys
+
 
 def parseLogs():
     """
