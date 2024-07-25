@@ -7,6 +7,7 @@ def makeChange(coins, total):
     determining the fewest number of coins needed 
     to meet a given amount total
     """
+    
     if not coins or coins is None:
         return -1
     if total <= 0:
