@@ -22,6 +22,7 @@ def isWinner(x, nums):
     Determines winner of Prime Game
     """
     
+    
     if x is None or nums is None or x == 0 or nums == []:
         return None
     Maria = Ben = 0
