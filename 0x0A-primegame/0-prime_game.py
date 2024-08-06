@@ -6,7 +6,6 @@ Prime Game
 
 def primeNumbers(n):
     """Return list of prime numbers between 1 and n inclusive"""
-    
     primeNos = []
     filtered = [True] * (n + 1)
     for prime in range(2, n + 1):
@@ -18,11 +17,7 @@ def primeNumbers(n):
 
 
 def isWinner(x, nums):
-    """
-    Determines winner of Prime Game
-    """
-    
-    
+    """Determines winner of Prime Game"""
     if x is None or nums is None or x == 0 or nums == []:
         return None
     Maria = Ben = 0
